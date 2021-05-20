@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  app:
+    command: >
+      -c 'sed -i "s|;date.timezone =|date.timezone = $TZ|" /usr/local/etc/php/php.ini
+      && apache2-foreground'
+    entrypoint: sh
+    environment:
+      TZ: $TZ
+    image: madworks/php:8.0-apache-dev
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/var/www/html
+      - composer:/root/.composer
+      - composer-cache:/root/.cache/composer
+      - /app/node_modules
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - 8025:8025
+
+  mysql:
+    command: mysqld
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      TZ: $TZ
+    image: mysql:8
+    ports:
+      - 3306:3306
+    volumes:
+      -  mysql:/var/lib/mysql
+
+  node:
+    command: >
+      -c 'yarn && yarn watch'
+    entrypoint: sh
+    image: node:16-alpine
+    volumes:
+      - .:/app
+      - yarn-cache:/usr/local/share/.cache/yarn
+      - /app/vendor
+    working_dir: /app
+
+  redis:
+    image: redis:6
+    volumes:
+      - redis:/data
+
+volumes:
+  composer:
+  composer-cache:
+  mysql:
+  redis:
+  yarn-cache:
