@@ -21,3 +21,5 @@ Route::get('mail', function () {
     Config::set('mail.from.address', 'mamor+from@example.com');
     Mail::to('mamor+to@example.com')->send(new \App\Mail\OrderShipped());
 });
+
+Route::get('user/{id}', \App\Http\Actions\UserShowAction::class);
