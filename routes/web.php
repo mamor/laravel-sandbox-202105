@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('mail', function () {
+    Config::set('mail.from.address', 'mamor+from@example.com');
+    Mail::to('mamor+to@example.com')->send(new \App\Mail\OrderShipped());
+});
